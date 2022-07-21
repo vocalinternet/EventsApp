@@ -14,10 +14,11 @@ class RetrofitServices{
     val timeStamp: String = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(
         Instant.now().plusSeconds(
             TimeUnit.DAYS.toSeconds(1)))
+    var skipInt: Int? = 0
 
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun getEvents(): Response<AllEvents> {
-        return RetrofitClient.timepadApi.getEvents(timeStamp)
+        return RetrofitClient.timepadApi.getEvents(timeStamp,skipInt)
     }
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun getEventID(): Response<EventID> {

@@ -18,8 +18,8 @@ interface ApiService {
 
     @Headers("Accept: application/json",
         "Authorization: Bearer 9c656d513c21316fdc77e5ff886cfc0f0e6f1f03")
-    @GET("events?starts_at_max={timestamp}&cities=Москва")
-    suspend fun getEvents(@Path("timestamp") timeStamp: String): Response<AllEvents>
+    @GET("events?starts_at_max={timestamp}&cities=Москва%limit=100&skip={skipInt}")
+    suspend fun getEvents(@Path("timestamp") timeStamp: String,@Path("skipInt") skipInt: Int?): Response<AllEvents>
 
     @Headers("Accept: application/json",
         "Authorization: Bearer 9c656d513c21316fdc77e5ff886cfc0f0e6f1f03")
