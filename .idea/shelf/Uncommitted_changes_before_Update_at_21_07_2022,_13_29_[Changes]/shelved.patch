@@ -1,0 +1,581 @@
+Index: app/src/main/java/com/eventsapp/models/GeocodingLocation.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/eventsapp/models/GeocodingLocation.kt b/app/src/main/java/com/eventsapp/models/GeocodingLocation.kt
+new file mode 100644
+--- /dev/null	(date 1658398597261)
++++ b/app/src/main/java/com/eventsapp/models/GeocodingLocation.kt	(date 1658398597261)
+@@ -0,0 +1,38 @@
++package com.eventsapp.models
++
++data class GeocodingLocation(
++    val attribution: String,
++    val features: List<Feature>,
++    val query: List<String>,
++    val type: String
++)
++
++data class Feature(
++    val bbox: List<Double>,
++    val center: List<Double>,
++    val context: List<Context>,
++    val geometry: Geometry,
++    val id: String,
++    val place_name: String,
++    val place_type: List<String>,
++    val properties: Properties,
++    val relevance: Int,
++    val text: String,
++    val type: String
++)
++
++data class Context(
++    val id: String,
++    val short_code: String,
++    val text: String,
++    val wikidata: String
++)
++
++data class Geometry(
++    val coordinates: List<Double>,
++    val type: String
++)
++
++data class Properties(
++    val wikidata: String
++)
+\ No newline at end of file
+Index: app/src/main/java/com/eventsapp/retrofit/RetrofitClient.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/eventsapp/retrofit/RetrofitClient.kt b/app/src/main/java/com/eventsapp/retrofit/RetrofitClient.kt
+new file mode 100644
+--- /dev/null	(date 1658398597256)
++++ b/app/src/main/java/com/eventsapp/retrofit/RetrofitClient.kt	(date 1658398597256)
+@@ -0,0 +1,30 @@
++package com.eventsapp.retrofit
++
++import android.os.Build
++import androidx.annotation.RequiresApi
++import retrofit2.Retrofit
++import retrofit2.converter.gson.GsonConverterFactory
++
++
++
++@RequiresApi(Build.VERSION_CODES.O)
++object RetrofitClient {
++    private const val TIMEPAD_URL = "https://api.timepad.ru/v1/"
++    private const val MAPBOX_URL = "https://api.mapbox.com/"
++    private val timepadGET by lazy {
++        Retrofit.Builder()
++            .baseUrl(TIMEPAD_URL)
++            .addConverterFactory(GsonConverterFactory.create())
++            .build()
++
++    }
++    private val mapboxGET by lazy {
++        Retrofit.Builder()
++            .baseUrl(MAPBOX_URL)
++            .addConverterFactory(GsonConverterFactory.create())
++            .build()
++    }
++
++    val timepadApi: ApiService by lazy { timepadGET.create(ApiService::class.java) }
++    val mapboxApi: ApiService by lazy { mapboxGET.create(ApiService::class.java) }
++}
+\ No newline at end of file
+Index: app/src/main/java/com/eventsapp/retrofit/ApiService.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/eventsapp/retrofit/ApiService.kt b/app/src/main/java/com/eventsapp/retrofit/ApiService.kt
+new file mode 100644
+--- /dev/null	(date 1658398597259)
++++ b/app/src/main/java/com/eventsapp/retrofit/ApiService.kt	(date 1658398597259)
+@@ -0,0 +1,41 @@
++package com.eventsapp.retrofit
++
++import android.os.Build
++import android.util.TimeUtils
++import androidx.annotation.RequiresApi
++import com.eventsapp.models.AllEvents
++import com.eventsapp.models.EventID
++import com.eventsapp.models.GeocodingLocation
++import retrofit2.Response
++import retrofit2.http.GET
++import retrofit2.http.Headers
++import retrofit2.http.Path
++
++
++
++@RequiresApi(Build.VERSION_CODES.O)
++interface ApiService {
++
++    @Headers("Accept: application/json",
++        "Authorization: Bearer 9c656d513c21316fdc77e5ff886cfc0f0e6f1f03")
++    @GET("events?starts_at_max={timestamp}&cities=Москва")
++    suspend fun getEvents(@Path("timestamp") timeStamp: String): Response<AllEvents>
++
++    @Headers("Accept: application/json",
++        "Authorization: Bearer 9c656d513c21316fdc77e5ff886cfc0f0e6f1f03")
++    @GET("events/{event_id}")
++    suspend fun getEventID(@Path("event_id") id: Int?): Response<EventID>
++
++    @GET("geocoding/v5/mapbox.places/{urlencode}.json?country=ru&limit=1&proximity=ip&types=place%2Cpostcode%2Caddress&access_token=pk.eyJ1Ijoidm9jYWxpbnRlcm5ldCIsImEiOiJjbDVyeXE4NGQwaTZoM2puMGY5am1xbnRoIn0.PV25RxZ_UUxxZx7Y5fbkoA")
++    suspend fun getCoordsLocation(@Path("urlencode") address: String?): Response<GeocodingLocation>
++
++
++}
++//curl "https://api.mapbox.com/geocoding/v5/mapbox.places/%D0%BF%D0%B5%D1%82%D1%83%D1%88%D0%BA%D0%B8.json?country=ru&limit=1&proximity=ip&types=place%2Cpostcode%2Caddress&access_token=pk.eyJ1Ijoidm9jYWxpbnRlcm5ldCIsImEiOiJjbDVyeXE4NGQwaTZoM2puMGY5am1xbnRoIn0.PV25RxZ_UUxxZx7Y5fbkoA"
++//{"type":"FeatureCollection","query":["петушки"],"features":[{"id":"place.17322736563947470","type":"Feature","place_type":["place"],"relevance":1,"properties":{"wikidata":"Q179372"},"text":"Петушки","place_name":"Петушки, Петушинский район, Vladimir, Russia","bbox":[39.409553978,55.909932119,39.50563287,55.949836025],"center":[39.46667,55.93333],"geometry":{"type":"Point","coordinates":[39.46667,55.93333]},
++// "context":[{"id":"district.12594763086198480","wikidata":"Q1654411","text":"Петушинский район"},
++// {"id":"region.12166129145721350","short_code":"RU-VLA","wikidata":"Q2702","text":"Vladimir"},{"id":"country.36095529422520","wikidata":"Q159","short_code":"ru","text":"Russia"}]}],"attribution":"NOTICE: © 2022 Mapbox and its suppliers. All rights reserved. Use of this data is subject to the Mapbox Terms of Service (https://www.mapbox.com/about/maps/). This response and the information it contains may not be retained. POI(s) provided by Foursquare."}
++
++
++//curl -X GET "https://api.timepad.ru/v1/events?starts_at_max=2022-07-21&cities=Москва"
++// -H  "accept: application/json" -H "Authorization: Bearer 9c656d513c21316fdc77e5ff886cfc0f0e6f1f03"
+\ No newline at end of file
+Index: README.md
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+># EventsApp\n<h1>App</h1>\n<h3><b>still</b> working!!!!!</h3>\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/README.md b/README.md
+--- a/README.md	(revision cfc5eccab6c80e450ff04fa6bdd1a5c48fd3e427)
++++ b/README.md	(date 1658398597242)
+@@ -1,3 +1,3 @@
+ # EventsApp
+-<h1>App</h1>
++<h1>APP</h1>
+ <h3><b>still</b> working!!!!!</h3>
+Index: app/src/main/java/com/eventsapp/MainActivity.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.eventsapp\n\nimport androidx.appcompat.app.AppCompatActivity\nimport android.os.Bundle\n\nclass MainActivity : AppCompatActivity() {\n    override fun onCreate(savedInstanceState: Bundle?) {\n        super.onCreate(savedInstanceState)\n        setContentView(R.layout.activity_main)\n        println(\"Hello world!\")\n    }\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/eventsapp/MainActivity.kt b/app/src/main/java/com/eventsapp/MainActivity.kt
+--- a/app/src/main/java/com/eventsapp/MainActivity.kt	(revision cfc5eccab6c80e450ff04fa6bdd1a5c48fd3e427)
++++ b/app/src/main/java/com/eventsapp/MainActivity.kt	(date 1658398597224)
+@@ -1,12 +1,27 @@
+ package com.eventsapp
+ 
++import android.annotation.SuppressLint
+ import androidx.appcompat.app.AppCompatActivity
+ import android.os.Bundle
++import android.view.LayoutInflater
++import android.view.View
++import android.view.ViewGroup
++import com.eventsapp.databinding.ActivityMainBinding
++
++@SuppressLint("StaticFieldLeak")
++private var mainBinding: ActivityMainBinding? = null
++private val binding get()= mainBinding!!
+ 
+ class MainActivity : AppCompatActivity() {
++
++    private lateinit var binding: ActivityMainBinding
++
+     override fun onCreate(savedInstanceState: Bundle?) {
+         super.onCreate(savedInstanceState)
+-        setContentView(R.layout.activity_main)
++        binding = ActivityMainBinding.inflate(layoutInflater)
++        val view = binding.root
++        setContentView(view)
+         println("Hello world!")
+     }
+-}
+\ No newline at end of file
++    }
++
+Index: app/src/main/java/com/eventsapp/Adapter/EventsAdapter.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/eventsapp/Adapter/EventsAdapter.kt b/app/src/main/java/com/eventsapp/Adapter/EventsAdapter.kt
+new file mode 100644
+--- /dev/null	(date 1658398597264)
++++ b/app/src/main/java/com/eventsapp/Adapter/EventsAdapter.kt	(date 1658398597264)
+@@ -0,0 +1,4 @@
++package com.eventsapp.Adapter
++
++class EventsAdapter {
++}
+\ No newline at end of file
+Index: build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>// Top-level build file where you can add configuration options common to all sub-projects/modules.\nplugins {\n    id 'com.android.application' version '7.2.1' apply false\n    id 'com.android.library' version '7.2.1' apply false\n    id 'org.jetbrains.kotlin.android' version '1.7.10' apply false\n}\n\ntask clean(type: Delete) {\n    delete rootProject.buildDir\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/build.gradle b/build.gradle
+--- a/build.gradle	(revision cfc5eccab6c80e450ff04fa6bdd1a5c48fd3e427)
++++ b/build.gradle	(date 1658398597244)
+@@ -1,8 +1,17 @@
+ // Top-level build file where you can add configuration options common to all sub-projects/modules.
++buildscript {
++
++    dependencies {
++        classpath 'com.android.tools.build:gradle:7.2.1'
++    }
++
++}
++
+ plugins {
+     id 'com.android.application' version '7.2.1' apply false
+     id 'com.android.library' version '7.2.1' apply false
+     id 'org.jetbrains.kotlin.android' version '1.7.10' apply false
++    id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin' version '2.0.0' apply false
+ }
+ 
+ task clean(type: Delete) {
+Index: settings.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>pluginManagement {\n    repositories {\n        gradlePluginPortal()\n        google()\n        mavenCentral()\n    }\n}\ndependencyResolutionManagement {\n    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)\n    repositories {\n        google()\n        mavenCentral()\n    }\n}\nrootProject.name = \"EventsApp\"\ninclude ':app'\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/settings.gradle b/settings.gradle
+--- a/settings.gradle	(revision cfc5eccab6c80e450ff04fa6bdd1a5c48fd3e427)
++++ b/settings.gradle	(date 1658398597246)
+@@ -4,6 +4,7 @@
+         google()
+         mavenCentral()
+     }
++
+ }
+ dependencyResolutionManagement {
+     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+Index: app/src/main/res/layout/activity_main.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\n<androidx.constraintlayout.widget.ConstraintLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\n    xmlns:tools=\"http://schemas.android.com/tools\"\n    android:layout_width=\"match_parent\"\n    android:layout_height=\"match_parent\"\n    tools:context=\".MainActivity\">\n\n    <TextView\n        android:layout_width=\"wrap_content\"\n        android:layout_height=\"wrap_content\"\n        android:text=\"Hello World!\"\n        app:layout_constraintBottom_toBottomOf=\"parent\"\n        app:layout_constraintEnd_toEndOf=\"parent\"\n        app:layout_constraintStart_toStartOf=\"parent\"\n        app:layout_constraintTop_toTopOf=\"parent\" />\n\n    <Button\n        android:id=\"@+id/button\"\n        android:layout_width=\"wrap_content\"\n        android:layout_height=\"wrap_content\"\n        android:text=\"Button\"\n        app:layout_constraintBottom_toBottomOf=\"parent\"\n        app:layout_constraintEnd_toEndOf=\"parent\"\n        app:layout_constraintHorizontal_bias=\"0.529\"\n        app:layout_constraintStart_toStartOf=\"parent\"\n        app:layout_constraintTop_toTopOf=\"parent\"\n        app:layout_constraintVertical_bias=\"0.292\" />\n\n</androidx.constraintlayout.widget.ConstraintLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/activity_main.xml b/app/src/main/res/layout/activity_main.xml
+--- a/app/src/main/res/layout/activity_main.xml	(revision cfc5eccab6c80e450ff04fa6bdd1a5c48fd3e427)
++++ b/app/src/main/res/layout/activity_main.xml	(date 1658398597248)
+@@ -7,6 +7,7 @@
+     tools:context=".MainActivity">
+ 
+     <TextView
++        android:id="@+id/textTest"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:text="Hello World!"
+Index: local.properties
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>## This file must *NOT* be checked into Version Control Systems,\n# as it contains information specific to your local configuration.\n#\n# Location of the SDK. This is only used by Gradle.\n# For customization when using a Version Control System, please read the\n# header note.\n#Mon Jul 18 14:45:09 GMT+03:00 2022\nsdk.dir=C\\:\\\\Users\\\\kayma\\\\AppData\\\\Local\\\\Android\\\\Sdk\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>ISO-8859-1
+===================================================================
+diff --git a/local.properties b/local.properties
+--- a/local.properties	(revision cfc5eccab6c80e450ff04fa6bdd1a5c48fd3e427)
++++ b/local.properties	(date 1658398597254)
+@@ -5,4 +5,4 @@
+ # For customization when using a Version Control System, please read the
+ # header note.
+ #Mon Jul 18 14:45:09 GMT+03:00 2022
+-sdk.dir=C\:\\Users\\kayma\\AppData\\Local\\Android\\Sdk
++sdk.dir= /Users/vocalinternet/Library/Android/sdk
+Index: app/build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>plugins {\n    id 'com.android.application'\n    id 'org.jetbrains.kotlin.android'\n}\n\nandroid {\n    compileSdk 32\n\n    defaultConfig {\n        applicationId \"com.eventsapp\"\n        minSdk 21\n        targetSdk 32\n        versionCode 1\n        versionName \"1.0\"\n\n        testInstrumentationRunner \"androidx.test.runner.AndroidJUnitRunner\"\n    }\n\n    buildTypes {\n        release {\n            minifyEnabled false\n            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'\n        }\n    }\n    compileOptions {\n        sourceCompatibility JavaVersion.VERSION_1_8\n        targetCompatibility JavaVersion.VERSION_1_8\n    }\n    kotlinOptions {\n        jvmTarget = '1.8'\n    }\n    buildToolsVersion '30.0.3'\n}\n\ndependencies {\n\n    implementation 'androidx.core:core-ktx:1.7.0'\n    implementation 'androidx.appcompat:appcompat:1.4.2'\n    implementation 'com.google.android.material:material:1.6.1'\n    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'\n    testImplementation 'junit:junit:4.13.2'\n    androidTestImplementation 'androidx.test.ext:junit:1.1.3'\n    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/build.gradle b/app/build.gradle
+--- a/app/build.gradle	(revision cfc5eccab6c80e450ff04fa6bdd1a5c48fd3e427)
++++ b/app/build.gradle	(date 1658398597230)
+@@ -1,6 +1,7 @@
+ plugins {
+     id 'com.android.application'
+     id 'org.jetbrains.kotlin.android'
++    id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
+ }
+ 
+ android {
+@@ -13,6 +14,7 @@
+         versionCode 1
+         versionName "1.0"
+ 
++
+         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+     }
+ 
+@@ -20,6 +22,7 @@
+         release {
+             minifyEnabled false
+             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
++            viewBinding.enabled true
+         }
+     }
+     compileOptions {
+@@ -34,11 +37,20 @@
+ 
+ dependencies {
+ 
+-    implementation 'androidx.core:core-ktx:1.7.0'
++    implementation 'androidx.core:core-ktx:1.8.0'
+     implementation 'androidx.appcompat:appcompat:1.4.2'
+     implementation 'com.google.android.material:material:1.6.1'
+     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+     testImplementation 'junit:junit:4.13.2'
+     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
++    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
++    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
++    implementation 'com.squareup.okhttp3:logging-interceptor:4.5.0'
++    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.1'
++    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1'
++    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.0"
++
++    implementation 'com.github.bumptech.glide:glide:4.13.2'
++    annotationProcessor 'com.github.bumptech.glide:compiler:4.13.2'
+ }
+\ No newline at end of file
+Index: app/src/main/AndroidManifest.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\n<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"\n    xmlns:tools=\"http://schemas.android.com/tools\"\n    package=\"com.eventsapp\">\n\n    <application\n        android:allowBackup=\"true\"\n        android:dataExtractionRules=\"@xml/data_extraction_rules\"\n        android:fullBackupContent=\"@xml/backup_rules\"\n        android:icon=\"@mipmap/ic_launcher\"\n        android:label=\"@string/app_name\"\n        android:roundIcon=\"@mipmap/ic_launcher_round\"\n        android:supportsRtl=\"true\"\n        android:theme=\"@style/Theme.EventsApp\"\n        tools:targetApi=\"31\">\n        <activity\n            android:name=\".MainActivity\"\n            android:exported=\"true\">\n            <intent-filter>\n                <action android:name=\"android.intent.action.MAIN\" />\n\n                <category android:name=\"android.intent.category.LAUNCHER\" />\n            </intent-filter>\n        </activity>\n    </application>\n\n</manifest>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/AndroidManifest.xml b/app/src/main/AndroidManifest.xml
+--- a/app/src/main/AndroidManifest.xml	(revision cfc5eccab6c80e450ff04fa6bdd1a5c48fd3e427)
++++ b/app/src/main/AndroidManifest.xml	(date 1658398597234)
+@@ -13,6 +13,22 @@
+         android:supportsRtl="true"
+         android:theme="@style/Theme.EventsApp"
+         tools:targetApi="31">
++
++        <!--
++             TODO: Before you run your application, you need a Google Maps API key.
++
++             To get one, follow the directions here:
++
++                https://developers.google.com/maps/documentation/android-sdk/get-api-key
++
++             Once you have your API key (it starts with "AIza"), define a new property in your
++             project's local.properties file (e.g. MAPS_API_KEY=Aiza...), and replace the
++             "YOUR_API_KEY" string in this file with "${MAPS_API_KEY}".
++        -->
++        <meta-data
++            android:name="com.google.android.geo.API_KEY"
++            android:value="YOUR_API_KEY" />
++
+         <activity
+             android:name=".MainActivity"
+             android:exported="true">
+Index: app/src/main/java/com/eventsapp/retrofit/RetrofitServices.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/eventsapp/retrofit/RetrofitServices.kt b/app/src/main/java/com/eventsapp/retrofit/RetrofitServices.kt
+new file mode 100644
+--- /dev/null	(date 1658398785165)
++++ b/app/src/main/java/com/eventsapp/retrofit/RetrofitServices.kt	(date 1658398785165)
+@@ -0,0 +1,31 @@
++package com.eventsapp.retrofit
++
++import android.os.Build
++import androidx.annotation.RequiresApi
++import com.eventsapp.models.EventID
++import com.eventsapp.models.AllEvents
++import com.eventsapp.models.Location
++import com.eventsapp.models.Value
++import retrofit2.Response
++import java.time.Instant
++import java.time.format.DateTimeFormatter
++import java.util.concurrent.TimeUnit
++
++class RetrofitServices{
++    @RequiresApi(Build.VERSION_CODES.O)
++    val timeStamp: String = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(
++        Instant.now().plusSeconds(
++            TimeUnit.DAYS.toSeconds(1)))
++
++    @RequiresApi(Build.VERSION_CODES.O)
++    suspend fun getEvents(): Response<AllEvents> {
++        return RetrofitClient.timepadApi.getEvents(timeStamp)
++    }
++    @RequiresApi(Build.VERSION_CODES.O)
++    suspend fun getEventID(): Response<EventID> {
++        return RetrofitClient.timepadApi.getEventID(Value().id)
++    }
++    @RequiresApi(Build.VERSION_CODES.O)
++    suspend fun getCoordsLocation(): Response<> {
++        return RetrofitClient.mapboxApi.getCoordsLocation()
++}
+\ No newline at end of file
+Index: app/src/main/java/com/eventsapp/models/EventID.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/eventsapp/models/EventID.kt b/app/src/main/java/com/eventsapp/models/EventID.kt
+new file mode 100644
+--- /dev/null	(date 1658398785177)
++++ b/app/src/main/java/com/eventsapp/models/EventID.kt	(date 1658398785177)
+@@ -0,0 +1,106 @@
++package com.eventsapp.models
++
++import java.io.Serializable
++
++data class EventID(
++    val access_status: String,
++    val ad_partner_percent: Int,
++    val age_limit: String,
++    //val categories: List<Category>,
++    val created_at: String,
++    val description_html: String,
++    val description_short: String,
++    val ends_at: String,
++    val id: Int,
++    val is_sending_free_tickets: Boolean,
++    val locale: String,
++    val location: Location,
++    val moderation_status: String,
++    val name: String,
++    val organization: Organization,
++    val properties: List<String>,
++    val questions: List<Question>,
++    val registration_data: RegistrationData,
++    val reservation_period: String,
++    val starts_at: String,
++    val status: String,
++    val ticket_types: List<TicketType>,
++    val tickets_limit: Int,
++    val url: String,
++    val widgets: Widgets
++) : Serializable
++
++//data class Category(
++//    val id: Int,
++//    val name: String
++//)
++
++data class Location(
++    val address: String? = null,
++    val city: String,
++    val country: String
++) : Serializable
++
++data class Organization(
++    val description_html: String,
++    val id: Int,
++    val logo_image: LogoImage,
++    val name: String,
++    val subdomain: String,
++    val url: String
++)
++
++data class Question(
++    val field_id: String,
++    val is_for_every_visitor: Boolean,
++    val is_mandatory: Boolean,
++    val meta: Meta,
++    val name: String,
++    val type: String
++)
++
++data class RegistrationData(
++    val is_registration_open: Boolean,
++    val price_max: Int,
++    val price_min: Int,
++    val sale_ends_at: String,
++    val tickets_total: Int
++)
++
++data class TicketType(
++    val ad_partner_profit: Int,
++    val buy_amount_max: Int,
++    val buy_amount_min: Int,
++    val description: String,
++    val id: Int,
++    val is_active: Boolean,
++    val is_promocode_locked: Boolean,
++    val name: String,
++    val price: Int,
++    val remaining: Int,
++    val sale_ends_at: String,
++    val send_personal_links: Boolean,
++    val status: String
++)
++
++data class Widgets(
++    val button: Button,
++    val custom: Custom
++)
++
++data class LogoImage(
++    val default_url: String,
++    val uploadcare_url: String
++)
++
++data class Meta(
++    val block: Boolean
++)
++
++data class Button(
++    val code_html: String
++)
++
++data class Custom(
++    val code_html: String
++)
+\ No newline at end of file
+Index: app/src/main/java/com/eventsapp/models/AllEvents.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/eventsapp/models/AllEvents.kt b/app/src/main/java/com/eventsapp/models/AllEvents.kt
+new file mode 100644
+--- /dev/null	(date 1658398597250)
++++ b/app/src/main/java/com/eventsapp/models/AllEvents.kt	(date 1658398597250)
+@@ -0,0 +1,28 @@
++package com.eventsapp.models
++
++import java.io.Serializable
++
++data class AllEvents(
++    val total: Int,
++    val values: List<Value>
++)
++
++data class Value(
++    val categories: List<Category>? = null,
++    val id: Int? = null,
++    val moderation_status: String? = null,
++    val name: String?= null,
++    val poster_image: PosterImage? = null,
++    val starts_at: String? = null,
++    val url: String? = null
++) : Serializable
++
++data class Category(
++    val id: Int,
++    val name: String
++)
++
++data class PosterImage(
++    val default_url: String,
++    val uploadcare_url: String
++)
+\ No newline at end of file
