@@ -1,3 +1,3 @@
 # EventsApp
-<h1>App</h1>
+<h1>APP</h1>
 <h3><b>still</b> working!!!!!</h3>
