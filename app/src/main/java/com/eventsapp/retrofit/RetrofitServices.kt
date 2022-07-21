@@ -2,11 +2,9 @@ package com.eventsapp.retrofit
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import com.eventsapp.models.EventID
-import com.eventsapp.models.AllEvents
-import com.eventsapp.models.Location
-import com.eventsapp.models.Value
+import com.eventsapp.models.*
 import retrofit2.Response
+import java.net.URLEncoder
 import java.time.Instant
 import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
@@ -26,6 +24,8 @@ class RetrofitServices{
         return RetrofitClient.timepadApi.getEventID(Value().id)
     }
     @RequiresApi(Build.VERSION_CODES.O)
-    suspend fun getCoordsLocation(): Response<> {
-        return RetrofitClient.mapboxApi.getCoordsLocation()
+    suspend fun getCoordsLocation(): Response<GeocodingLocation> {
+        return RetrofitClient.mapboxApi.getCoordsLocation(URLEncoder.encode(Location().address, "utf-8").toString()
+        )
+    }
 }

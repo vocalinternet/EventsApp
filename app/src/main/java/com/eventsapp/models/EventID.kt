@@ -37,8 +37,8 @@ data class EventID(
 
 data class Location(
     val address: String? = null,
-    val city: String,
-    val country: String
+    val city: String? = null,
+    val country: String? = null
 ) : Serializable
 
 data class Organization(
