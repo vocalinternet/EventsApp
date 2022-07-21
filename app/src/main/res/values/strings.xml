@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">EventsApp</string>
+    <string name="mapbox_access_token">pk.eyJ1Ijoidm9jYWxpbnRlcm5ldCIsImEiOiJjbDVyeXE4NGQwaTZoM2puMGY5am1xbnRoIn0.PV25RxZ_UUxxZx7Y5fbkoA</string>
 </resources>
