@@ -1,0 +1,15 @@
+<component name="libraryTable">
+  <library name="Gradle: com.mapbox.plugin:maps-attribution:10.6.2@aar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/fb3c671dbf82b48062ccfc5569b248d7/transformed/jetified-maps-attribution-10.6.2/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/fb3c671dbf82b48062ccfc5569b248d7/transformed/jetified-maps-attribution-10.6.2/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/fb3c671dbf82b48062ccfc5569b248d7/transformed/jetified-maps-attribution-10.6.2/AndroidManifest.xml" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.mapbox.plugin/maps-attribution/10.6.2/16db08d0f6dd0a7704d3e7d150f160efd9507942/maps-attribution-10.6.2-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.mapbox.plugin/maps-attribution/10.6.2/a4526c8f16a0010b6f93ca3dd9d732077ad70463/maps-attribution-10.6.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

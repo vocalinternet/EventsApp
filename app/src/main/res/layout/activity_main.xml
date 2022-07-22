@@ -6,9 +6,13 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <com.mapbox.mapboxsdk.maps.MapView
-        android:id="@+id/mapview"
+    <com.mapbox.maps.MapView
+        android:id="@+id/mapView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </com.mapbox.mapboxsdk.maps.MapView>
+        android:layout_height="match_parent"
+        app:mapbox_cameraTargetLat="59.31"
+        app:mapbox_cameraTargetLng="18.06"
+        app:mapbox_cameraZoom="9.0"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="-2dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>
