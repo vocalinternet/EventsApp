@@ -15,6 +15,7 @@ class MainActivity : AppCompatActivity() {
 }*/
 
 import  android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
@@ -72,10 +73,13 @@ class MainActivity : AppCompatActivity() {
                 .withIconImage(it)
 // Add the resulting pointAnnotation to the map.
             val pointAnnotation = pointAnnotationManager?.create(pointAnnotationOptions)
+            // set click listener
             pointAnnotationManager?.addClickListener {clickedAnnotation ->
                 if (pointAnnotation == clickedAnnotation) {
+                    val intent = Intent(this@MainActivity, Screen2::class.java)
                     println("OK OK OK OK OK OK")
                     Log.d("opa", "dewd")
+                    startActivity(intent)
                 }
                 true
             }
