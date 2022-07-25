@@ -14,12 +14,14 @@ class MainActivity : AppCompatActivity() {
     //fun AddtoMap()
 }*/
 
-import android.content.Context
+import  android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.util.Log
+import android.view.View
 import android.widget.Button
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
@@ -28,6 +30,8 @@ import com.mapbox.geojson.Point
 import com.mapbox.maps.MapView
 import com.mapbox.maps.Style
 import com.mapbox.maps.plugin.annotation.annotations
+import com.mapbox.maps.plugin.annotation.generated.PointAnnotation
+import com.mapbox.maps.plugin.annotation.generated.PointAnnotationManager
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
 
@@ -67,7 +71,14 @@ class MainActivity : AppCompatActivity() {
 // The bitmap will be added to map style automatically.
                 .withIconImage(it)
 // Add the resulting pointAnnotation to the map.
-            pointAnnotationManager?.create(pointAnnotationOptions)
+            val pointAnnotation = pointAnnotationManager?.create(pointAnnotationOptions)
+            pointAnnotationManager?.addClickListener {clickedAnnotation ->
+                if (pointAnnotation == clickedAnnotation) {
+                    println("OK OK OK OK OK OK")
+                    Log.d("opa", "dewd")
+                }
+                true
+            }
         }
     }
     private fun bitmapFromDrawableRes(context: Context, @DrawableRes resourceId: Int) =
