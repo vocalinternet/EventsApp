@@ -30,6 +30,10 @@ interface ApiService {
     suspend fun getCoordsLocation(@Path("urlencode") address: String?): Response<GeocodingLocation>
 
 
+    companion object {
+        lateinit var api: ApiService
+    }
+
 }
 //curl "https://api.mapbox.com/geocoding/v5/mapbox.places/%D0%BF%D0%B5%D1%82%D1%83%D1%88%D0%BA%D0%B8.json?country=ru&limit=1&proximity=ip&types=place%2Cpostcode%2Caddress&access_token=pk.eyJ1Ijoidm9jYWxpbnRlcm5ldCIsImEiOiJjbDVyeXE4NGQwaTZoM2puMGY5am1xbnRoIn0.PV25RxZ_UUxxZx7Y5fbkoA"
 //{"type":"FeatureCollection","query":["петушки"],"features":[{"id":"place.17322736563947470","type":"Feature","place_type":["place"],"relevance":1,"properties":{"wikidata":"Q179372"},"text":"Петушки","place_name":"Петушки, Петушинский район, Vladimir, Russia","bbox":[39.409553978,55.909932119,39.50563287,55.949836025],"center":[39.46667,55.93333],"geometry":{"type":"Point","coordinates":[39.46667,55.93333]},

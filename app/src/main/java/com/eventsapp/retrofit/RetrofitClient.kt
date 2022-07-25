@@ -11,7 +11,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 object RetrofitClient {
     private const val TIMEPAD_URL = "https://api.timepad.ru/v1/"
     private const val MAPBOX_URL = "https://api.mapbox.com/"
-    private val timepadGET by lazy {
+    val timepadGET by lazy {
         Retrofit.Builder()
             .baseUrl(TIMEPAD_URL)
             .addConverterFactory(GsonConverterFactory.create())

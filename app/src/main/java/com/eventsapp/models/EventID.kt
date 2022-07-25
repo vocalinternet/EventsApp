@@ -27,7 +27,8 @@ data class EventID(
     val ticket_types: List<TicketType>,
     val tickets_limit: Int,
     val url: String,
-    val widgets: Widgets
+    val widgets: Widgets,
+    val image_url: String? = LogoImage().default_url
 ) : Serializable
 
 //data class Category(
@@ -89,8 +90,8 @@ data class Widgets(
 )
 
 data class LogoImage(
-    val default_url: String,
-    val uploadcare_url: String
+    val default_url: String? = null,
+    val uploadcare_url: String? = null
 )
 
 data class Meta(

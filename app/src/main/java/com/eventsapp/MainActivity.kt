@@ -6,7 +6,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import com.eventsapp.databinding.ActivityMainBinding
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 
 @SuppressLint("StaticFieldLeak")
 private var mainBinding: ActivityMainBinding? = null
@@ -14,15 +16,21 @@ private val binding get()= mainBinding!!
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        val view = binding.root
-        setContentView(view)
-        println("Hello world!")
-        println("111222333")
+        setContentView(R.layout.activity_main)
+
+//        with(binding) {
+//            button.setOnClickListener {
+//                BottomFragment().show(supportFragmentManager, "tag")
+//            }
+//        }
+
+        var but1 = findViewById<Button>(R.id.button)
+        but1.setOnClickListener {
+            BottomFragment().show(supportFragmentManager, "tag")
+        }
     }
     }
 
