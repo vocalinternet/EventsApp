@@ -3,8 +3,8 @@ package com.eventsapp.models
 import java.io.Serializable
 
 data class AllEvents(
-    val total: Int,
-    val values: List<Value>
+    val total: Int? = null,
+    val values: List<Value>? = null
 )
 
 data class Value(

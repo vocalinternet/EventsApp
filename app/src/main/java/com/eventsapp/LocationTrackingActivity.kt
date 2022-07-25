@@ -97,7 +97,7 @@ class LocationTrackingActivity : AppCompatActivity() {
                         literal(0.6)
                     }
                     stop {
-                        literal(20.0)
+                        literal(3.0)
                         literal(1.0)
                     }
                 }.toJson()
@@ -108,7 +108,7 @@ class LocationTrackingActivity : AppCompatActivity() {
     }
 
     private fun onCameraTrackingDismissed() {
-        Toast.makeText(this, "onCameraTrackingDismissed", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "аа3ааХЪ", Toast.LENGTH_SHORT).show()
         mapView.location
             .removeOnIndicatorPositionChangedListener(onIndicatorPositionChangedListener)
         mapView.location

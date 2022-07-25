@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LocationTrackingActivity">
+    tools:context=".MainActivity">
+
 
     <com.mapbox.maps.MapView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
@@ -12,8 +13,8 @@
     android:id="@+id/mapView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    mapbox:mapbox_cameraTargetLat="55.754027"
-    mapbox:mapbox_cameraTargetLng="37.650169"
+    mapbox:mapbox_cameraTargetLat="55.558741"
+    mapbox:mapbox_cameraTargetLng="37.378847"
     mapbox:mapbox_cameraZoom="9.0"
     />
 </androidx.constraintlayout.widget.ConstraintLayout>

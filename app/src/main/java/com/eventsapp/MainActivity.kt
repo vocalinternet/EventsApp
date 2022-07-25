@@ -1,10 +1,29 @@
 package com.eventsapp
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
+import androidx.annotation.DrawableRes
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.ViewModelFactoryDsl
+import com.eventsapp.Adapter.EventsAdapter
+import com.eventsapp.Adapter.EventsAdapterFactory
+import com.eventsapp.models.Location
+import com.eventsapp.retrofit.RetrofitServices
 import com.mapbox.android.gestures.MoveGestureDetector
+import com.mapbox.geojson.Point
+import com.mapbox.geojson.Point.fromLngLat
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapView
 import com.mapbox.maps.Style
@@ -15,122 +34,97 @@ import com.mapbox.maps.plugin.gestures.gestures
 import com.mapbox.maps.plugin.locationcomponent.OnIndicatorBearingChangedListener
 import com.mapbox.maps.plugin.locationcomponent.OnIndicatorPositionChangedListener
 import com.mapbox.maps.plugin.locationcomponent.location
-import com.mapbox.maps.R
 import java.lang.ref.WeakReference
+import com.mapbox.maps.plugin.annotation.annotations
+import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
+import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
+import java.lang.reflect.Executable
+import java.net.URLEncoder
 
 
-/**
- * Tracks the user location on screen, simulates a navigation session.
- */
+var mapView: MapView? = null
+@RequiresApi(Build.VERSION_CODES.O)
+private lateinit var adapterService: EventsAdapter
+var urlencode = URLEncoder.encode(Location().address,"utf-8")
+
 class MainActivity : AppCompatActivity() {
-
-    private lateinit var locationPermissionHelper: LocationPermissionHelper
-
-    private val onIndicatorBearingChangedListener = OnIndicatorBearingChangedListener {
-        mapView.getMapboxMap().setCamera(CameraOptions.Builder().bearing(it).build())
-    }
-
-    private val onIndicatorPositionChangedListener = OnIndicatorPositionChangedListener {
-        mapView.getMapboxMap().setCamera(CameraOptions.Builder().center(it).build())
-        mapView.gestures.focalPoint = mapView.getMapboxMap().pixelForCoordinate(it)
-    }
-
-    private val onMoveListener = object : OnMoveListener {
-        override fun onMoveBegin(detector: MoveGestureDetector) {
-            onCameraTrackingDismissed()
-        }
-
-        override fun onMove(detector: MoveGestureDetector): Boolean {
-            return false
-        }
-
-        override fun onMoveEnd(detector: MoveGestureDetector) {}
-    }
-    private lateinit var mapView: MapView
-
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mapView = MapView(this)
-        setContentView(mapView)
-        locationPermissionHelper = LocationPermissionHelper(WeakReference(this))
-        locationPermissionHelper.checkPermissions {
-            onMapReady()
-        }
-    }
+        setContentView(R.layout.activity_main)
+        val service = RetrofitServices()
+        val eventsAdapterFactory = EventsAdapterFactory(service)
 
-    private fun onMapReady() {
-        mapView.getMapboxMap().setCamera(
-            CameraOptions.Builder()
-                .zoom(8.0)
-                .build()
-        )
-        mapView.getMapboxMap().loadStyleUri(
-            Style.MAPBOX_STREETS
-        ) {
-            initLocationComponent()
-            setupGesturesListener()
-        }
-    }
-
-    private fun setupGesturesListener() {
-        mapView.gestures.addOnMoveListener(onMoveListener)
-    }
-
-    private fun initLocationComponent() {
-        val locationComponentPlugin = mapView.location
-        locationComponentPlugin.updateSettings {
-            this.enabled = true
-            this.locationPuck = LocationPuck2D(
-                bearingImage = AppCompatResources.getDrawable(
-                    this@MainActivity, //@LocationTrackingActivity
-                    R.drawable.mapbox_user_puck_icon,
-                ),
-                shadowImage = AppCompatResources.getDrawable(
-                    this@MainActivity,
-                    R.drawable.mapbox_user_icon_shadow,
-                ),
-                scaleExpression = interpolate {
-                    linear()
-                    zoom()
-                    stop {
-                        literal(0.0)
-                        literal(0.6)
+        adapterService = ViewModelProvider(this, eventsAdapterFactory)[EventsAdapter::class.java]
+        //adapterService.getEvents()
+       // adapterService.eventsResponse.observe(this, Observer { response -> Log.d("AAA", listOf(response.body()!!.values).toString() )})
+            //for(i in 0..response.body()!!.total!!) { adapterService.getEventID()
+        mapView = findViewById(R.id.mapView)
+        mapView?.getMapboxMap()?.loadStyleUri(
+            Style.MAPBOX_STREETS,
+            object : Style.OnStyleLoaded {
+                override fun onStyleLoaded(style: Style) {
+                    var opa: List<Double>? = null
+                    adapterService.getEvents()
+                    adapterService.eventsResponse.observe(this@MainActivity, Observer { response ->
+                        listOf(response.body()!!.values).toString()
+                        for (i in 0..response.body()!!.total!!) {
+                            adapterService.getEventID()
+                        }
+                    })
+                    adapterService.getCoordsLocation()
+                    adapterService.LatLonResponse.observe(this@MainActivity, Observer { response ->
+                        opa = response.body()?.center
+                    })
+                    for (i in 0..(opa!!.size)) {
+                        addAnnotationToMap(opa!![0], opa!![1])
                     }
-                    stop {
-                        literal(10.0)
-                        literal(1.0)
-                    }
-                }.toJson()
-            )
+                }
+            })
+            }
+
+
+
+
+        private fun addAnnotationToMap(x : Double, y :Double) {
+// Create an instance of the Annotation API and get the PointAnnotationManager.
+            bitmapFromDrawableRes(
+                this@MainActivity,
+                R.drawable.red_marker
+            )?.let {
+                val annotationApi = mapView?.annotations
+                val pointAnnotationManager = annotationApi?.createPointAnnotationManager()
+// Set options for the resulting symbol layer.
+                val pointAnnotationOptions: PointAnnotationOptions = PointAnnotationOptions()
+// Define a geographic coordinate.
+                    .withPoint(Point.fromLngLat(x, y))
+// Specify the bitmap you assigned to the point annotation
+// The bitmap will be added to map style automatically.
+                    .withIconImage(it)
+// Add the resulting pointAnnotation to the map.
+                pointAnnotationManager?.create(pointAnnotationOptions)
+            }
         }
-        locationComponentPlugin.addOnIndicatorPositionChangedListener(onIndicatorPositionChangedListener)
-        locationComponentPlugin.addOnIndicatorBearingChangedListener(onIndicatorBearingChangedListener)
-    }
+        private fun bitmapFromDrawableRes(context: Context, @DrawableRes resourceId: Int) =
+            convertDrawableToBitmap(AppCompatResources.getDrawable(context, resourceId))
 
-    private fun onCameraTrackingDismissed() {
-        //Toast.makeText(this, "onCameraTrackingDismissed", Toast.LENGTH_SHORT).show()
-        mapView.location
-            .removeOnIndicatorPositionChangedListener(onIndicatorPositionChangedListener)
-        mapView.location
-            .removeOnIndicatorBearingChangedListener(onIndicatorBearingChangedListener)
-        mapView.gestures.removeOnMoveListener(onMoveListener)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        mapView.location
-            .removeOnIndicatorBearingChangedListener(onIndicatorBearingChangedListener)
-        mapView.location
-            .removeOnIndicatorPositionChangedListener(onIndicatorPositionChangedListener)
-        mapView.gestures.removeOnMoveListener(onMoveListener)
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        locationPermissionHelper.onRequestPermissionsResult(requestCode, permissions, grantResults)
-    }
-}
+        private fun convertDrawableToBitmap(sourceDrawable: Drawable?): Bitmap? {
+            if (sourceDrawable == null) {
+                return null
+            }
+            return if (sourceDrawable is BitmapDrawable) {
+                sourceDrawable.bitmap
+            } else {
+// copying drawable object to not manipulate on the same reference
+                val constantState = sourceDrawable.constantState ?: return null
+                val drawable = constantState.newDrawable().mutate()
+                val bitmap: Bitmap = Bitmap.createBitmap(
+                    drawable.intrinsicWidth, drawable.intrinsicHeight,
+                    Bitmap.Config.ARGB_8888
+                )
+                val canvas = Canvas(bitmap)
+                drawable.setBounds(0, 0, canvas.width, canvas.height)
+                drawable.draw(canvas)
+                bitmap
+            }
+        }}

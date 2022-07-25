@@ -5,12 +5,13 @@ import android.util.TimeUtils
 import androidx.annotation.RequiresApi
 import com.eventsapp.models.AllEvents
 import com.eventsapp.models.EventID
+import com.eventsapp.models.Feature
 import com.eventsapp.models.GeocodingLocation
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.Path
-
+import retrofit2.http.Query
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -18,8 +19,8 @@ interface ApiService {
 
     @Headers("Accept: application/json",
         "Authorization: Bearer 9c656d513c21316fdc77e5ff886cfc0f0e6f1f03")
-    @GET("events?starts_at_max={timestamp}&cities=Москва%limit=100&skip={skipInt}")
-    suspend fun getEvents(@Path("timestamp") timeStamp: String,@Path("skipInt") skipInt: Int?): Response<AllEvents>
+    @GET("events?cities=Москва&limit=100")
+    suspend fun getEvents(@Query("starts_at_max") timeStamp: String, @Query("skip") skipInt: Int?): Response<AllEvents>
 
     @Headers("Accept: application/json",
         "Authorization: Bearer 9c656d513c21316fdc77e5ff886cfc0f0e6f1f03")
@@ -27,7 +28,7 @@ interface ApiService {
     suspend fun getEventID(@Path("event_id") id: Int?): Response<EventID>
 
     @GET("geocoding/v5/mapbox.places/{urlencode}.json?country=ru&limit=1&proximity=ip&types=place%2Cpostcode%2Caddress&access_token=pk.eyJ1Ijoidm9jYWxpbnRlcm5ldCIsImEiOiJjbDVyeXE4NGQwaTZoM2puMGY5am1xbnRoIn0.PV25RxZ_UUxxZx7Y5fbkoA")
-    suspend fun getCoordsLocation(@Path("urlencode") address: String?): Response<GeocodingLocation>
+    suspend fun getCoordsLocation(@Path("urlencode") address: String?): Response<Feature>
 
 
 }
