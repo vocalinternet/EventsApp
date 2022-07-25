@@ -1,0 +1,15 @@
+<component name="libraryTable">
+  <library name="Gradle: com.mapbox.plugin:maps-lifecycle:10.6.2@aar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/5d324270ba3a9463b8965d9972ba5650/transformed/jetified-maps-lifecycle-10.6.2/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/5d324270ba3a9463b8965d9972ba5650/transformed/jetified-maps-lifecycle-10.6.2/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/5d324270ba3a9463b8965d9972ba5650/transformed/jetified-maps-lifecycle-10.6.2/AndroidManifest.xml" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.mapbox.plugin/maps-lifecycle/10.6.2/27b73f417925a1ca5240d4ab899ca0d86abcb088/maps-lifecycle-10.6.2-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.mapbox.plugin/maps-lifecycle/10.6.2/55f7a96f5eada44d9b9e0632334d45f8cc6b301/maps-lifecycle-10.6.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
