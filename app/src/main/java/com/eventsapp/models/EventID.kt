@@ -28,7 +28,8 @@ data class EventID(
     val tickets_limit: Int? = null,
     val url: String? = null,
     val widgets: Widgets? = null,
-    val res: List<EventID>? = null
+    val res: List<EventID>? = null,
+    val address: String? = Location().address
 ) : Serializable
 
 //data class Category(

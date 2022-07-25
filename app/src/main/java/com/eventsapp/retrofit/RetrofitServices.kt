@@ -2,8 +2,9 @@ package com.eventsapp.retrofit
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import com.eventsapp.MainActivity
 import com.eventsapp.models.*
-import com.eventsapp.urlencode
+
 import retrofit2.Response
 import java.net.URLEncoder
 import java.time.*
@@ -27,10 +28,10 @@ class RetrofitServices{
     }
 
     suspend fun getEventID(): Response<EventID> {
-        return RetrofitClient.timepadApi.getEventID(Value().id)
+        return RetrofitClient.timepadApi.getEventID(MainActivity().resId)
     }
 
     suspend fun getCoordsLocation(): Response<Feature> {
-        return RetrofitClient.mapboxApi.getCoordsLocation(urlencode)
+        return RetrofitClient.mapboxApi.getCoordsLocation(MainActivity().urlencode)
     }
 }

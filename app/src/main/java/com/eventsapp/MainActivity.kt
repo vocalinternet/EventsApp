@@ -16,6 +16,7 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.ViewModelFactoryDsl
 import com.eventsapp.Adapter.EventsAdapter
 import com.eventsapp.Adapter.EventsAdapterFactory
@@ -38,17 +39,21 @@ import java.lang.ref.WeakReference
 import com.mapbox.maps.plugin.annotation.annotations
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
+import kotlinx.coroutines.launch
 import java.lang.reflect.Executable
 import java.net.URLEncoder
+import kotlin.properties.Delegates
 
 
 var mapView: MapView? = null
-@RequiresApi(Build.VERSION_CODES.O)
 private lateinit var adapterService: EventsAdapter
-var urlencode = URLEncoder.encode(Location().address,"utf-8")
 
+
+@RequiresApi(Build.VERSION_CODES.O)
 class MainActivity : AppCompatActivity() {
-    @RequiresApi(Build.VERSION_CODES.O)
+
+    lateinit var urlencode: String
+    var resId by Delegates.notNull<Int>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -66,19 +71,43 @@ class MainActivity : AppCompatActivity() {
                 override fun onStyleLoaded(style: Style) {
                     var opa: List<Double>? = null
                     adapterService.getEvents()
+
+                    adapterService.viewModelScope.launch {
+                        adapterService.getEvents()
+                    }
+
                     adapterService.eventsResponse.observe(this@MainActivity, Observer { response ->
-                        listOf(response.body()!!.values).toString()
+                        Log.d("TAG", response.body()!!.total!!.toString())
+                        Log.d("TAG", response.body()?.id!!.toString())
                         for (i in 0..response.body()!!.total!!) {
-                            adapterService.getEventID()
+
+                            resId = response.body()?.id!!
+                            adapterService.viewModelScope.launch {
+                                adapterService.getEventID()
+                            }
+                            adapterService.currentEventResponse.observe(this@MainActivity) { responseID ->
+                                Log.d("TAG", responseID.body()?.address.toString())
+                                urlencode = URLEncoder.encode(responseID.body()?.address.toString(), "utf-8")
+
+
+                            }
+                            //URLEncoder.encode(Location().address,"utf-8"))
                         }
                     })
-                    adapterService.getCoordsLocation()
+                    adapterService.viewModelScope.launch {
+                        adapterService.getCoordsLocation()
+                    }
+
                     adapterService.LatLonResponse.observe(this@MainActivity, Observer { response ->
                         opa = response.body()?.center
+                        print(response.body()?.center)
                     })
+                    if(opa != null){
                     for (i in 0..(opa!!.size)) {
                         addAnnotationToMap(opa!![0], opa!![1])
                     }
+                    }else {Log.d("TAG", opa.toString())
+                    Log.d("TAG",urlencode.toString())}
                 }
             })
             }

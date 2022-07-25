@@ -4,7 +4,8 @@ import java.io.Serializable
 
 data class AllEvents(
     val total: Int? = null,
-    val values: List<Value>? = null
+    val values: List<Value>? = null,
+    val id: Int? = Value().id
 )
 
 data class Value(
