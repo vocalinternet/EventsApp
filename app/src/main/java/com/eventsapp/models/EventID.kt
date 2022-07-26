@@ -28,13 +28,18 @@ data class EventID(
     val tickets_limit: Int,
     val url: String,
     val widgets: Widgets,
-    val image_url: String? = LogoImage().default_url
+    val poster_image: PosterImage? = null
 ) : Serializable
 
 //data class Category(
 //    val id: Int,
 //    val name: String
 //)
+
+data class PosterImage(
+    val default_url: String? = null,
+    val uploadcare_url: String? = null
+)
 
 data class Location(
     val address: String? = null,

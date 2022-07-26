@@ -3,8 +3,11 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/User/AndroidStudioProjects/EventsApp/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.115" />
         <entry key="..\:/Users/User/AndroidStudioProjects/EventsApp/app/src/main/res/drawable/bottom_sheet_background.xml" value="0.333" />
         <entry key="..\:/Users/User/AndroidStudioProjects/EventsApp/app/src/main/res/drawable/ic_launcher_background.xml" value="0.333" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/EventsApp/app/src/main/res/drawable/mapbox_user_icon_shadow.xml" value="0.1" />
+        <entry key="..\:/Users/User/AndroidStudioProjects/EventsApp/app/src/main/res/layout/activity_screen2.xml" value="0.1634963768115942" />
         <entry key="..\:/Users/User/AndroidStudioProjects/EventsApp/app/src/main/res/layout/bottom_sheet_navigation.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/User/AndroidStudioProjects/EventsApp/app/src/main/res/layout/description_fragment.xml" value="0.19947916666666668" />
         <entry key="..\:/Users/User/AndroidStudioProjects/EventsApp/app/src/main/res/layout/descrption_fragment.xml" value="0.35507246376811596" />

@@ -12,7 +12,6 @@ data class Value(
     val id: Int? = null,
     val moderation_status: String? = null,
     val name: String?= null,
-    val poster_image: PosterImage? = null,
     val starts_at: String? = null,
     val url: String? = null
 ) : Serializable
@@ -20,9 +19,4 @@ data class Value(
 data class Category(
     val id: Int,
     val name: String
-)
-
-data class PosterImage(
-    val default_url: String,
-    val uploadcare_url: String
 )
