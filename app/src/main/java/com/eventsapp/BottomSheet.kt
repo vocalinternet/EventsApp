@@ -10,10 +10,12 @@ import android.widget.FrameLayout
 import com.bumptech.glide.Glide
 import com.eventsapp.databinding.DescriptionFragmentBinding
 import com.eventsapp.models.AllEvents
+import com.eventsapp.models.Button
 import com.eventsapp.models.EventID
 import com.eventsapp.retrofit.RetrofitClient
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -27,7 +29,6 @@ private const val COLLAPSED_HEIGHT = 228
 
 class BottomFragment : BottomSheetDialogFragment() {
 
-    // Можно обойтись без биндинга и использовать findViewById
     lateinit var binding: DescriptionFragmentBinding
 
     // Переопределим тему, чтобы использовать нашу с закруглёнными углами
@@ -129,7 +130,9 @@ class BottomFragment : BottomSheetDialogFragment() {
             }
         }
 
-
+        binding.viewInMapsButton.setOnClickListener{
+            ViewInMapsDialog().show(parentFragmentManager, "tag2")
+        }
 
 
         dialog?.let {
