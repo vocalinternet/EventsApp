@@ -24,6 +24,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
@@ -81,7 +82,11 @@ class MainActivity : AppCompatActivity() {
         mapView=findViewById(R.id.mapView)
         locationPermissionHelper = LocationPermissionHelper(WeakReference(this))
         locationPermissionHelper.checkPermissions {
+            val bt = findViewById<ImageButton>(R.id.button)
             onMapReady()
+            bt.setOnClickListener {
+                onMapReady()
+            }
         }
         /*mapView?.getMapboxMap()?.loadStyleUri(
             Style.MAPBOX_STREETS,
@@ -149,7 +154,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onCameraTrackingDismissed() {
-        Toast.makeText(this, "onCameraTrackingDismissed", Toast.LENGTH_SHORT).show()
+        //Toast.makeText(this, "", Toast.LENGTH_SHORT).show()
         mapView?.location
             ?.removeOnIndicatorPositionChangedListener(onIndicatorPositionChangedListener)
         mapView?.location
