@@ -24,24 +24,25 @@ class EventsAdapter(private val services: RetrofitServices ) : ViewModel() {
         }
     }
 
-    var currentEventResponse: MutableLiveData<Response<EventID>> = MutableLiveData()
-    fun getEventID() {
-        viewModelScope.launch {
-        var timepadEventIDResponse = services.getEventID()
-            currentEventResponse.postValue(timepadEventIDResponse)
-            //currentEventResponse.value = timepadEventIDResponse
-    }
+//    var currentEventResponse: MutableLiveData<Response<EventID>> = MutableLiveData()
+//    fun getEventID() {
+//        viewModelScope.launch {
+//       // var timepadEventIDResponse = services.getEventID()
+//            currentEventResponse.postValue(timepadEventIDResponse)
+//            //currentEventResponse.value = timepadEventIDResponse
+//    }
+//    }
+
+//    var LatLonResponse: MutableLiveData<Response<GeocodingLocation>> = MutableLiveData()
+//    fun getCoordsLocation() {
+//        viewModelScope.launch {
+//            var LatLonEventResponse = services.getCoordsLocation()
+//            LatLonResponse.postValue(LatLonEventResponse)
+//            //LatLonResponse.value = LatLonEventResponse
+//        }
+
     }
 
-    var LatLonResponse: MutableLiveData<Response<Feature>> = MutableLiveData()
-    fun getCoordsLocation() {
-        viewModelScope.launch {
-            var LatLonEventResponse = services.getCoordsLocation()
-            LatLonResponse.postValue(LatLonEventResponse)
-            //LatLonResponse.value = LatLonEventResponse
-        }
-
-    }
 
     //var listEvents: List<Value>? = AllEvents().values
     //var currentEvent: List<EventID>? = EventID().res
@@ -54,4 +55,3 @@ class EventsAdapter(private val services: RetrofitServices ) : ViewModel() {
 
 
 
-}

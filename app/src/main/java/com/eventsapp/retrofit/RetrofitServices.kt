@@ -27,11 +27,11 @@ class RetrofitServices{
         return RetrofitClient.timepadApi.getEvents(timeStamp,skipInt)
     }
 
-    suspend fun getEventID(): Response<EventID> {
-        return RetrofitClient.timepadApi.getEventID(MainActivity().resId)
-    }
+   // suspend fun getEventID(): Response<EventID> {
+   //     return RetrofitClient.timepadApi.getEventID(MainActivity().resId)
+   // }
 
-    suspend fun getCoordsLocation(): Response<Feature> {
-        return RetrofitClient.mapboxApi.getCoordsLocation(MainActivity().urlencode)
-    }
+//    suspend fun getCoordsLocation(): Response<GeocodingLocation> {
+//        return RetrofitClient.mapboxApi.getCoordsLocation(MainActivity().urlencode)
+//    }
 }

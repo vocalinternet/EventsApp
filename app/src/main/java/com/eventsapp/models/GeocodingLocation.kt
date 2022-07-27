@@ -1,10 +1,10 @@
 package com.eventsapp.models
 
 data class GeocodingLocation(
-    val attribution: String,
-    val features: List<Feature>,
-    val query: List<String>,
-    val type: String
+    val attribution: String? = null,
+    val features: List<Feature>? = null,
+    val query: List<String>? = null,
+    val type: String? = null
 )
 
 data class Feature(

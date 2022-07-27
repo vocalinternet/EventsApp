@@ -23,7 +23,7 @@ data class Category(
     val name: String
 )
 
-data class PosterImage(
-    val default_url: String,
-    val uploadcare_url: String
-)
+//data class PosterImage(
+//    val default_url: String,
+//    val uploadcare_url: String
+//)

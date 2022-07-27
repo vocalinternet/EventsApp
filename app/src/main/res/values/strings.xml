@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">EventsApp</string>
+    <string name="app_name">Поближе Бы</string>
     <!--Location-->
     <string name="toggle_customised_puck">Toggle customised puck style</string>
     <string name="toggle_custom_map_style">Toggle custom Map style</string>
