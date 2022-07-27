@@ -58,7 +58,7 @@ class BottomFragment : BottomSheetDialogFragment() {
             if (st[0] != '*') {
                 st += " " + inform?.starts_at?.substring(11..15)
             }else {
-                st = "давно началось"
+                st = " "
             }
             var fin: String = inform?.ends_at?.substring(8, 10) ?: "*"
             fin += "." + inform?.ends_at?.substring(5, 7) ?: "*"
@@ -66,12 +66,15 @@ class BottomFragment : BottomSheetDialogFragment() {
             if (fin[0] != '*') {
                 fin += " " + inform?.ends_at?.substring(11..15)
             }else {
-                fin = "ещё не кончилось"
+                fin = " "
             }
             dateAndTime.text = st + " - " + fin
             dateAndTime1.text = dateAndTime.text
             if (inform?.description_html != "" && inform?.description_html != null) {
-                eventDescription.text = htmlTextFormat(inform?.description_html)
+                var descrip = ""
+                if (inform?.description_short != null) descrip += htmlTextFormat(inform?.description_short) + "\n"
+                if (inform?.description_html != null) descrip += htmlTextFormat(inform?.description_html)
+                eventDescription.text = descrip
             } else {
                 eventDescription.text = "Из названия и так все понятно"
             }
@@ -106,8 +109,9 @@ class BottomFragment : BottomSheetDialogFragment() {
 
         val density = requireContext().resources.displayMetrics.density
 
-        var curEvent = 2007809
+        var curEvent = 2077948
         val timepadTAG = "Timepad API"
+
 
         CoroutineScope(Dispatchers.IO).launch {
             val result = RetrofitClient.timepadApi.getEventID(curEvent)

@@ -50,6 +50,7 @@
             android:text=""
             android:textSize="24sp" />
 
+
     </LinearLayout>
 
 
@@ -117,7 +118,6 @@
             </LinearLayout>
 
         </androidx.core.widget.NestedScrollView>
-
 
 
 
