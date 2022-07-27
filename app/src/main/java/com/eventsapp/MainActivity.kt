@@ -29,6 +29,7 @@ import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.mapbox.android.gestures.MoveGestureDetector
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
@@ -82,7 +83,7 @@ class MainActivity : AppCompatActivity() {
         mapView=findViewById(R.id.mapView)
         locationPermissionHelper = LocationPermissionHelper(WeakReference(this))
         locationPermissionHelper.checkPermissions {
-            val bt = findViewById<ImageButton>(R.id.button)
+            val bt = findViewById<FloatingActionButton>(R.id.floating_action_button)
             onMapReady()
             bt.setOnClickListener {
                 onMapReady()
@@ -129,11 +130,11 @@ class MainActivity : AppCompatActivity() {
             this.locationPuck = LocationPuck2D(
                 bearingImage = AppCompatResources.getDrawable(
                     this@MainActivity,
-                    R.drawable.account,
+                    com.mapbox.maps.R.drawable.mapbox_user_puck_icon,
                 ),
                 shadowImage = AppCompatResources.getDrawable(
                     this@MainActivity,
-                    R.drawable.account,
+                    com.mapbox.maps.R.drawable.mapbox_user_icon_shadow,
                 ),
                 scaleExpression = interpolate {
                     linear()
