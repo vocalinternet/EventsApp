@@ -17,7 +17,7 @@ interface ApiService {
 
     @Headers("Accept: application/json",
         "Authorization: Bearer 9c656d513c21316fdc77e5ff886cfc0f0e6f1f03")
-    @GET("events?cities=Москва&limit=100")
+    @GET("events?cities=Москва@limit=100")
     suspend fun getEvents(@Query("starts_at_max") timeStamp: String, @Query("skip") skipInt: Int?): Response<AllEvents>
 
     @Headers("Accept: application/json",

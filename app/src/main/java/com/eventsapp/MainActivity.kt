@@ -9,24 +9,22 @@ import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.lifecycle.ViewModelProvider
 import com.eventsapp.Adapter.EventsAdapter
-import com.eventsapp.Adapter.EventsAdapterFactory
 import com.eventsapp.databinding.ActivityMainBinding
 import com.eventsapp.retrofit.RetrofitClient
-import com.eventsapp.retrofit.RetrofitServices
 import com.mapbox.android.gestures.MoveGestureDetector
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapView
 import com.mapbox.maps.MapboxMap
 import com.mapbox.maps.Style
+import com.mapbox.maps.extension.localization.localizeLabels
 import com.mapbox.maps.extension.style.expressions.dsl.generated.interpolate
+import com.mapbox.maps.extension.style.expressions.dsl.generated.switchCase
 import com.mapbox.maps.plugin.LocationPuck2D
 import com.mapbox.maps.plugin.annotation.annotations
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
@@ -36,20 +34,18 @@ import com.mapbox.maps.plugin.gestures.gestures
 import com.mapbox.maps.plugin.locationcomponent.OnIndicatorBearingChangedListener
 import com.mapbox.maps.plugin.locationcomponent.OnIndicatorPositionChangedListener
 import com.mapbox.maps.plugin.locationcomponent.location
-import com.mapbox.maps.extension.localization.localizeLabels
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.lang.ref.WeakReference
 import java.net.URLEncoder
-import java.time.Duration
+import java.sql.Timestamp
+import java.text.DateFormat
+import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.properties.Delegates
-
-
-
 
 
 private lateinit var adapterService: EventsAdapter
@@ -120,35 +116,43 @@ class MainActivity : AppCompatActivity() {
                     initLocationComponent()
                     setupGesturesListener()
                     val opa: MutableList<Pair<Double, Double>> = mutableListOf()
-                    // здесь ошибка, исправьте пж
-                    val timeStamp = LocalDate.parse("${Calendar.getInstance().get(Calendar.YEAR)}-${Calendar.getInstance().get(Calendar.MONTH)}-${Calendar.getInstance().get(Calendar.DATE)}", DateTimeFormatter.ofPattern("yyyy-MM-dd")).plusDays(1).toString()
+
+
+                    val formatter: DateFormat = SimpleDateFormat("yyyy-MM-dd")
+
+                    val today = Date()
+
+                    val todayWithZeroTime: Date = formatter.parse(formatter.format(today))
+                    val timeStamp = LocalDate.parse(formatter.format(today), DateTimeFormatter.ofPattern("yyyy-MM-dd")).plusDays(1).toString()
                     CoroutineScope(Dispatchers.IO).launch {
+                        var limit = 100
                         var getevents =  RetrofitClient.timepadApi.getEvents(timeStamp,skipInt)
                         print(getevents.message())
                         if (getevents.isSuccessful){
                         //if (getevents.body()!!.values!!.size < getevents.body()!!.total!!) skipInt += 100
-                        for (i in 0 until (getevents.body()!!.values!!.size)){
+                            // че здесь не работает я не понимаю ничего
+                        for (i in 0 until limit) {
                             var geteventid = RetrofitClient.timepadApi.getEventID(getevents.body()!!.values!![i].id)
                             print(geteventid)
+                            print(getevents.body()!!.values!!.size)
                             var locationEvent = geteventid.body()?.location?.address!!.trim().split("\\s").size
                             print(locationEvent)
-                            if(geteventid.isSuccessful ) {
-                                var odds = geteventid.body()?.location?.address!!.split(" ").take(20).joinToString(separator = " ")
-                                println(odds)
+                            //if(geteventid.isSuccessful ) {
+//                                var odds = geteventid.body()?.location?.address!!.split(" ").take(20).joinToString(separator = " ")
+//                                println(odds)
 
-                                val getcoordsbyid = RetrofitClient.yaApi.getLL("${geteventid.body()?.location?.country!!} ${geteventid.body()?.location?.city!!} ${geteventid.body()?.location?.address!!}")
-                                println(getcoordsbyid)
-                                var pairLL = getcoordsbyid.body()?.response!!.GeoObjectCollection.featureMember.get(0).GeoObject.Point.pos.split(" ")
-                                for (i in 0 until getevents.body()!!.values!!.size*2 ){
-                                    opa += Pair(pairLL[i].toDouble(),pairLL[i+1].toDouble())}
-                                println(opa)
-                                resId = geteventid.body()?.poster_image!!.default_url.toString()
-                                for (i in opa) {
-                                    addAnnotationToMap(i.first, i.second)
-                        }}}}
-                    }}
+                            var getcoordsbyid = RetrofitClient.yaApi.getLL("${geteventid.body()?.location?.country!!} ${geteventid.body()?.location?.city!!} ${geteventid.body()?.location?.address!!}")
+                            println(getcoordsbyid)
+                            var pairLL = getcoordsbyid.body()?.response!!.GeoObjectCollection.featureMember.get(0).GeoObject.Point.pos.split(" ")
+                            when(i) {100 -> {skipInt+=100;limit+=100}}
+                            for (g in 0 until getevents.body()!!.values!!.size){
+                            opa += Pair(pairLL[g].toDouble(), pairLL[g + 1].toDouble())
+                            println(opa)
+                            //resId = geteventid.body()?.poster_image!!.default_url.toString()
+                            for (j in opa) addAnnotationToMap(j.first, j.second)}
+                        }}}}})}
 
-                })}
+
 
 
 
