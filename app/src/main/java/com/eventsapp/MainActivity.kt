@@ -124,33 +124,54 @@ class MainActivity : AppCompatActivity() {
 
                     val todayWithZeroTime: Date = formatter.parse(formatter.format(today))
                     val timeStamp = LocalDate.parse(formatter.format(today), DateTimeFormatter.ofPattern("yyyy-MM-dd")).plusDays(1).toString()
+                    var total = 1000
+                    var cur = 0
                     CoroutineScope(Dispatchers.IO).launch {
+                        while (skipInt < total){
                         var limit = 100
                         var getevents =  RetrofitClient.timepadApi.getEvents(timeStamp,skipInt)
-                        print(getevents.message())
+                        total = getevents.body()!!.total!!
+                            println("total ${total}")
+                        println("mess ${getevents.message()}")
                         if (getevents.isSuccessful){
-                        //if (getevents.body()!!.values!!.size < getevents.body()!!.total!!) skipInt += 100
-                            // че здесь не работает я не понимаю ничего
-                        for (i in 0 until limit) {
-                            var geteventid = RetrofitClient.timepadApi.getEventID(getevents.body()!!.values!![i].id)
-                            print(geteventid)
-                            print(getevents.body()!!.values!!.size)
-                            var locationEvent = geteventid.body()?.location?.address!!.trim().split("\\s").size
-                            print(locationEvent)
+
+                        while (cur < total) {
+                            cur++
+                            println("total ${total}")
+                            println("currr $cur")
+                            var geteventid = RetrofitClient.timepadApi.getEventID(getevents.body()!!.values!![cur % 100].id)
+                            print("id $geteventid")
+                            println("body ${geteventid.body()}")
+                            println("values ${getevents.body()!!.values}")
+                            print("get ${getevents.body()!!.values?.lastIndex}")
+
                             //if(geteventid.isSuccessful ) {
 //                                var odds = geteventid.body()?.location?.address!!.split(" ").take(20).joinToString(separator = " ")
 //                                println(odds)
 
-                            var getcoordsbyid = RetrofitClient.yaApi.getLL("${geteventid.body()?.location?.country!!} ${geteventid.body()?.location?.city!!} ${geteventid.body()?.location?.address!!}")
-                            println(getcoordsbyid)
-                            var pairLL = getcoordsbyid.body()?.response!!.GeoObjectCollection.featureMember.get(0).GeoObject.Point.pos.split(" ")
-                            when(i) {100 -> {skipInt+=100;limit+=100}}
-                            for (g in 0 until getevents.body()!!.values!!.size){
-                            opa += Pair(pairLL[g].toDouble(), pairLL[g + 1].toDouble())
-                            println(opa)
+                            var getcoordsbyid =
+                                RetrofitClient.yaApi.getLL("${geteventid.body()?.location?.country!!} ${geteventid.body()?.location?.city!!} ${geteventid.body()?.location?.address!!}")
+                            println("hbujbby $getcoordsbyid ")
+                            var pairLL =
+                                getcoordsbyid.body()?.response!!.GeoObjectCollection.featureMember.get(
+                                    0
+                                ).GeoObject.Point.pos.split(" ")
+//                            when (i) {
+//                                99 -> {
+//                                    skipInt += 100
+//                                }
+//                            }
+                            println( "pair $pairLL ")
+                            opa += Pair(pairLL[0].toDouble(), pairLL[1].toDouble())
+                            println("opa $opa")
                             //resId = geteventid.body()?.poster_image!!.default_url.toString()
-                            for (j in opa) addAnnotationToMap(j.first, j.second)}
-                        }}}}})}
+                            skipInt += 100
+                        }
+                        }}};
+                    for (j in opa) addAnnotationToMap(j.first, j.second)
+                }
+        })
+        }
 
 
 

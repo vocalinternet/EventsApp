@@ -3,39 +3,39 @@ package com.eventsapp.models
 import java.io.Serializable
 
 data class EventID(
-    val access_status: String? = null,
-    val ad_partner_percent: Int? = null,
-    val age_limit: String? = null,
+    val access_status: String,
+    val ad_partner_percent: Int,
+    val age_limit: String,
     //val categories: List<Category>,
-    val created_at: String? = null,
-    val description_html: String? = null,
-    val description_short: String? = null,
-    val ends_at: String? = null,
-    val id: Int? = null,
-    val is_sending_free_tickets: Boolean? = null,
-    val locale: String? = null,
-    val location: Location? = null,
-    val moderation_status: String? = null,
-    val name: String? = null,
-    val organization: Organization? = null,
-    val properties: List<String>? = null,
-    val questions: List<Question>? = null,
-    val registration_data: RegistrationData? = null,
-    val reservation_period: String? = null,
-    val starts_at: String? = null,
-    val status: String? = null,
-    val ticket_types: List<TicketType>? = null,
-    val tickets_limit: Int? = null,
-    val url: String? = null,
-    val widgets: Widgets? = null,
-    val res: List<EventID>? = null,
-    val address: String? = null,
-    val poster_image: PosterImage? = null
+    val created_at: String,
+    val description_html: String,
+    val description_short: String,
+    val ends_at: String,
+    val id: Int,
+    val is_sending_free_tickets: Boolean,
+    val locale: String,
+    val location: Location,
+    val moderation_status: String,
+    val name: String,
+    val organization: Organization,
+    val properties: List<String>,
+    val questions: List<Question>,
+    val registration_data: RegistrationData,
+    val reservation_period: String,
+    val starts_at: String,
+    val status: String,
+    val ticket_types: List<TicketType>,
+    val tickets_limit: Int,
+    val url: String,
+    val widgets: Widgets,
+    val res: List<EventID>,
+    val address: String,
+    val poster_image: PosterImage
 ) : Serializable
 
 data class PosterImage(
-    val default_url: String? = null,
-    val uploadcare_url: String? = null
+    val default_url: String,
+    val uploadcare_url: String
 )
 
 //data class Category(
@@ -44,9 +44,9 @@ data class PosterImage(
 //)
 
 data class Location(
-    val address: String? = null,
-    val city: String? = null,
-    val country: String? = null
+    val address: String,
+    val city: String,
+    val country: String
 ) : Serializable
 
 data class Organization(
