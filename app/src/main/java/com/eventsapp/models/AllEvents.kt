@@ -4,17 +4,18 @@ import java.io.Serializable
 
 data class AllEvents(
     val total: Int,
-    val values: List<Value>
+    val values: List<Value>,
+
 )
 
 data class Value(
-    val categories: List<Category>? = null,
-    val id: Int? = null,
-    val moderation_status: String? = null,
-    val name: String?= null,
-    val poster_image: PosterImage? = null,
-    val starts_at: String? = null,
-    val url: String? = null
+    val categories: List<Category>,
+    val id: Int,
+    val moderation_status: String,
+    val name: String,
+    val poster_image: PosterImage,
+    val starts_at: String,
+    val url: String
 ) : Serializable
 
 data class Category(
@@ -22,7 +23,7 @@ data class Category(
     val name: String
 )
 
-data class PosterImage(
-    val default_url: String,
-    val uploadcare_url: String
-)
+//data class PosterImage(
+//    val default_url: String,
+//    val uploadcare_url: String
+//)

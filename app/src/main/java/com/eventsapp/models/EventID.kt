@@ -27,8 +27,16 @@ data class EventID(
     val ticket_types: List<TicketType>,
     val tickets_limit: Int,
     val url: String,
-    val widgets: Widgets
+    val widgets: Widgets,
+    val res: List<EventID>,
+    val address: String,
+    val poster_image: PosterImage
 ) : Serializable
+
+data class PosterImage(
+    val default_url: String,
+    val uploadcare_url: String
+)
 
 //data class Category(
 //    val id: Int,
@@ -36,9 +44,9 @@ data class EventID(
 //)
 
 data class Location(
-    val address: String? = null,
-    val city: String? = null,
-    val country: String? = null
+    val address: String,
+    val city: String,
+    val country: String
 ) : Serializable
 
 data class Organization(
