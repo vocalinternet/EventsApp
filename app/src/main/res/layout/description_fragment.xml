@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
@@ -19,7 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Name"
+            android:text="Wait a second"
             android:textSize="30sp" />
 
     </LinearLayout>
@@ -38,7 +39,7 @@
             android:id="@+id/date_and_time1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="date + time"
+            android:text=""
             android:textSize="25sp" />
 
         <!-- на счет hight я еще подумаю-->
@@ -46,14 +47,9 @@
             android:id="@+id/event_description1"
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:text="(Recycler view) long description of event
-long description of event
-long description of event
-long description of event
-long description of event
-long description of event
-long description of event"
+            android:text=""
             android:textSize="24sp" />
+
 
     </LinearLayout>
 
@@ -69,7 +65,7 @@ long description of event"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/layout_top">
 
-        <!-- ????????какой стндартный размер у картинок?-->
+
         <ImageView
             android:id="@+id/image"
             android:layout_width="wrap_content"
@@ -84,31 +80,49 @@ long description of event"
             android:id="@+id/date_and_time"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="date + time"
+            android:text=""
             android:textSize="25sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/event_name" />
 
-
-        <TextView
-            android:id="@+id/event_description"
-            android:layout_width="match_parent"
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/SCROLLER_ID"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="(Recycler view) long description of event
-long description of event
-long description of event
-long description of event
-long description of event
-long description of event
-long description of event"
-            android:maxLines = "20"
-            android:scrollbars = "vertical"
-            android:textSize="24sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/date_and_time" />
+            android:scrollbars="vertical"
+            android:fillViewport="true">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/event_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textSize="24sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/date_and_time" />
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/view_in_maps_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="20dp"
+                    tools:background="@color/black"
+                    android:clickable="true"
+                    app:layout_constraintBottom_toBottomOf="@id/event_description"
+                    app:layout_constraintEnd_toEndOf="@id/event_description"
+                    app:srcCompat="@drawable/ic_route_svgrepo_com" />
+            </LinearLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+
 
     </LinearLayout>
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

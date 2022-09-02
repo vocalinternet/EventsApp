@@ -1,33 +1,34 @@
 package com.eventsapp
 
-import android.os.Build
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
-import android.view.Display
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.FrameLayout
-import android.widget.TextView
-import androidx.annotation.RequiresApi
 import com.bumptech.glide.Glide
 import com.eventsapp.databinding.DescriptionFragmentBinding
+import com.eventsapp.models.AllEvents
+import com.eventsapp.models.Button
 import com.eventsapp.models.EventID
-import com.eventsapp.retrofit.ApiService.Companion.api
 import com.eventsapp.retrofit.RetrofitClient
-import com.eventsapp.retrofit.RetrofitServices
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import kotlinx.coroutines.*
-import retrofit2.Response
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.InputStream
+import java.net.URL
+import java.net.URLEncoder
+
 
 private const val COLLAPSED_HEIGHT = 228
 
 class BottomFragment : BottomSheetDialogFragment() {
-    lateinit var MAIN : MainActivity
 
-    // Можно обойтись без биндинга и использовать findViewById
     lateinit var binding: DescriptionFragmentBinding
 
     // Переопределим тему, чтобы использовать нашу с закруглёнными углами
@@ -38,57 +39,88 @@ class BottomFragment : BottomSheetDialogFragment() {
         return binding.root
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+    fun htmlTextFormat(str: String) : String {
+        var flag: Boolean = false
+        var ans: String = ""
+        for (i in 0..(str.length - 1)) {
+            if (str[i] == '<') flag = true
+            if (!flag) ans += str[i]
+            if (str[i] == '>') flag = false
+        }
+        return ans
+    }
+
     fun putInfoIntoViews(inform: EventID?): Void? {
         with(binding) {
             eventName.text = inform?.name
-            var str: String = inform?.starts_at?.substring(8, 10) ?: "*"
-            str = str + "." + inform?.starts_at?.substring(5, 7) ?: "*"
-            str = str + "." + inform?.starts_at?.substring(0, 5) ?: "*"
-            if (str[0] != '*') {
-                dateAndTime.text = str
+            var st: String = inform?.starts_at?.substring(8, 10) ?: "*"
+            st += "." + inform?.starts_at?.substring(5, 7) ?: "*"
+            st += "." + inform?.starts_at?.substring(0, 4) ?: "*"
+            if (st[0] != '*') {
+                st += " " + inform?.starts_at?.substring(11..15)
             }else {
-                dateAndTime.text = "давно началось"
+                st = " "
             }
+            var fin: String = inform?.ends_at?.substring(8, 10) ?: "*"
+            fin += "." + inform?.ends_at?.substring(5, 7) ?: "*"
+            fin += "." + inform?.ends_at?.substring(0, 4) ?: "*"
+            if (fin[0] != '*') {
+                fin += " " + inform?.ends_at?.substring(11..15)
+            }else {
+                fin = " "
+            }
+            dateAndTime.text = st + " - " + fin
             dateAndTime1.text = dateAndTime.text
-//            println("HERE!!!")
-//            println(inform?.description_short)
-//            println(inform?.description_html)
-//            println(inform?.starts_at)
-//            println(inform?.ends_at)
-
-            if (inform?.description_html != "") {
-                eventDescription.text = inform?.description_html
+            if (inform?.description_html != "" && inform?.description_html != null) {
+                var descrip = ""
+                if (inform?.description_short != null) descrip += htmlTextFormat(inform?.description_short) + "\n"
+                if (inform?.description_html != null) descrip += htmlTextFormat(inform?.description_html)
+                eventDescription.text = descrip
             } else {
                 eventDescription.text = "Из названия и так все понятно"
             }
             eventDescription1.text = eventDescription.text
-
-
         }
         return null
     }
 
+//    fun getUrlWithId(id: Int) : String? {
+//
+//    }
+
+
+
+    fun putPhotoIntoView(inform: EventID?): Void? {
+        println(inform?.poster_image?.default_url)
+        with(binding) {
+            Glide.with(this@BottomFragment)
+                .load(inform?.poster_image!!.default_url)
+                .centerCrop()
+                .placeholder(R.drawable.ic_launcher_background)
+                .into(image)
+        }
+        return null
+    }
+
+
     // Я выбрал этот метод ЖЦ, и считаю, что это удачное место
     // Вы можете попробовать производить эти действия не в этом методе ЖЦ, а например в onCreateDialog()
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onStart() {
         super.onStart()
 
-        // Плотность понадобится нам в дальнейшем
         val density = requireContext().resources.displayMetrics.density
 
-
-        var curEvent = 250748
+        var curEvent = 2077948
         val timepadTAG = "Timepad API"
+
 
         CoroutineScope(Dispatchers.IO).launch {
             val result = RetrofitClient.timepadApi.getEventID(curEvent)
             if (result.isSuccessful) {
                 val inform = result.body()
-
                 withContext(Dispatchers.Main) {
                     putInfoIntoViews(inform)
+                    //putPhotoIntoView(inform)
                 }
             } else {
                 Log.d(timepadTAG, "Не удачный запрос")
@@ -98,9 +130,9 @@ class BottomFragment : BottomSheetDialogFragment() {
             }
         }
 
-
-
-
+        binding.viewInMapsButton.setOnClickListener{
+            ViewInMapsDialog().show(parentFragmentManager, "tag2")
+        }
 
 
         dialog?.let {

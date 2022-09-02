@@ -7,8 +7,10 @@
         <entry key="..\:/Users/kayma/AndroidStudioProjects/EventsApp7/app/src/main/res/drawable/ic_launcher_background.xml" value="0.2235" />
         <entry key="..\:/Users/kayma/AndroidStudioProjects/EventsApp7/app/src/main/res/layout/activity_main.xml" value="0.22327898550724637" />
         <entry key="app/src/main/res/drawable/bottom_sheet_background.xml" value="0.214" />
+        <entry key="app/src/main/res/drawable/ic_route_svgrepo_com.xml" value="0.1865" />
         <entry key="app/src/main/res/layout/activity_location_component.xml" value="0.3880208333333333" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.2078125" />
+        <entry key="app/src/main/res/layout/choose_map_dialog.xml" value="0.21574074074074073" />
         <entry key="app/src/main/res/layout/description_fragment.xml" value="0.2078125" />
         <entry key="app/src/main/res/layout/mapbox_activity_user_current_location.xml" value="0.3880208333333333" />
         <entry key="app/src/main/res/layout/menu_location_component.xml" value="0.38697916666666665" />
